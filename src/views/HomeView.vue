@@ -11,58 +11,38 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import { DataStore } from 'aws-amplify'
+import { ref } from 'vue'
 import { Todo } from '../models/index'
 
-export default {
-  name: 'App',
-  async created() {
-    this.getTodos()
-  },
-  data() {
-    return {
-      name: '',
-      description: '',
-      todos: [],
-    }
-  },
-  methods: {
-    async createTodo() {
-      const { name, description } = this
-      if (!name || !description) return
+const name = ref('')
+const description = ref('')
+const todos = ref([])
 
-      try {
-        await DataStore.save(
-          new Todo({
-            name: name,
-            description: description,
-          })
-        )
-        console.log('Todo saved successfully!')
-      } catch (error) {
-        console.log('Error saving post', error)
-      }
+const createTodo = () => {
+  if (!name.value || !description.value) return
 
-      const todo = { name, description }
-      this.todos = [...this.todos, todo]
+  const aNewTodo = new Todo({
+    name: name.value,
+    description: description.value,
+  })
 
-      this.name = ''
-      this.description = ''
-    },
-    async getTodos() {
-      try {
-        const todos = await DataStore.query(Todo)
-        console.log(
-          'Todos retrieved successfully!',
-          JSON.stringify(todos, null, 2)
-        )
-        this.todos = todos
-        
-      } catch (error) {
-        console.log('Error retrieving todos', error)
-      }
-    },
-  },
+  DataStore.save(aNewTodo)
+    .then(() => {
+      todos = [...todos, aNewTodo]
+
+      name.value = ''
+      description.value = ''
+    })
+    .catch((error) => console.error('Error saving todo', error))
 }
+
+const getTodos = () => {
+  DataStore.query(Todo)
+    .then((existingTodos) => (todos.value = existingTodos))
+    .catch((error) => console.error('Error retrieving todos', error))
+}
+
+getTodos()
 </script>
