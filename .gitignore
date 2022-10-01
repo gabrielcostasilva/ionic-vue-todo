@@ -105,6 +105,7 @@ dist
 
 **.DS_Store
 **team-provider-info.json
+**cli-inputs.json
 
 #amplify-do-not-edit-begin
 amplify/\#current-cloud-backend

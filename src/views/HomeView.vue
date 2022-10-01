@@ -1,8 +1,8 @@
 <template>
   <div id="app">
     <h1>Todo App</h1>
-    <input type="text" v-model="name" placeholder="Todo name">
-    <input type="text" v-model="description" placeholder="Todo description">
+    <input type="text" v-model="name" placeholder="Todo name" />
+    <input type="text" v-model="description" placeholder="Todo description" />
     <button v-on:click="createTodo">Create Todo</button>
     <div v-for="item in todos" :key="item.id">
       <h3>{{ item.name }}</h3>
@@ -12,42 +12,57 @@
 </template>
 
 <script>
-import { API } from 'aws-amplify';
-import { createTodo } from '../graphql/mutations';
-import { listTodos } from '../graphql/queries';
+import { DataStore } from 'aws-amplify'
+import { Todo } from '../models/index'
 
 export default {
   name: 'App',
   async created() {
-    this.getTodos();
-    this.subscribe();
+    this.getTodos()
   },
   data() {
     return {
       name: '',
       description: '',
-      todos: []
+      todos: [],
     }
   },
   methods: {
     async createTodo() {
-      const { name, description } = this;
-      if (!name || !description) return;
-      const todo = { name, description };
-      this.todos = [...this.todos, todo];
-      await API.graphql({
-        query: createTodo,
-        variables: {input: todo},
-      });
-      this.name = '';
-      this.description = '';
+      const { name, description } = this
+      if (!name || !description) return
+
+      try {
+        await DataStore.save(
+          new Todo({
+            name: name,
+            description: description,
+          })
+        )
+        console.log('Todo saved successfully!')
+      } catch (error) {
+        console.log('Error saving post', error)
+      }
+
+      const todo = { name, description }
+      this.todos = [...this.todos, todo]
+
+      this.name = ''
+      this.description = ''
     },
     async getTodos() {
-      const todos = await API.graphql({
-        query: listTodos
-      });
-      this.todos = todos.data.listTodos.items;
-    }
-  }
+      try {
+        const todos = await DataStore.query(Todo)
+        console.log(
+          'Todos retrieved successfully!',
+          JSON.stringify(todos, null, 2)
+        )
+        this.todos = todos
+        
+      } catch (error) {
+        console.log('Error retrieving todos', error)
+      }
+    },
+  },
 }
 </script>

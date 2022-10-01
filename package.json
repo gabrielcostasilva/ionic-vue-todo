@@ -7,6 +7,7 @@
     "build": "vue-cli-service build"
   },
   "dependencies": {
+    "@aws-amplify/datastore": "^3.12.12",
     "@aws-amplify/ui-vue": "^2.4.22",
     "aws-amplify": "^4.3.37",
     "core-js": "^3.8.3",
