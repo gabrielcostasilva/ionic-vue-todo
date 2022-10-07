@@ -4,6 +4,13 @@
       <ion-toolbar>
         <ion-title>Todo App</ion-title>
       </ion-toolbar>
+      <ion-toolbar>
+        <ion-searchbar
+          :debounce="1000"
+          @ionChange="handleSearch($event)"
+          @ionClear="getTodos()"
+        ></ion-searchbar>
+      </ion-toolbar>
     </ion-header>
 
     <ion-content :fullscreen="true">
@@ -62,6 +69,7 @@ import {
   IonFab,
   IonFabButton,
   IonIcon,
+  IonSearchbar,
 } from '@ionic/vue'
 
 import { save } from 'ionicons/icons'
@@ -92,6 +100,11 @@ const getTodos = () => {
   DataStore.query(Todo)
     .then((existingTodos) => (todos.value = existingTodos))
     .catch((error) => console.error('Error retrieving todos', error))
+}
+
+const handleSearch = (event) => {
+  const query = event.target.value.toLowerCase()
+  todos.value = todos.value.filter((d) => d.name.toLowerCase().indexOf(query) > -1)
 }
 
 getTodos()
