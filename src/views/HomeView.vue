@@ -72,6 +72,8 @@ import {
   IonFabButton,
   IonIcon,
   IonSearchbar,
+  toastController,
+  alertController,
 } from '@ionic/vue'
 
 import { save } from 'ionicons/icons'
@@ -89,13 +91,32 @@ const createTodo = () => {
   })
 
   DataStore.save(aNewTodo)
-    .then(() => {
+    .then(async () => {
       todos.value = [...todos.value, aNewTodo]
 
       name.value = ''
       description.value = ''
+
+      const toast = await toastController.create({
+        message: 'Created!',
+        duration: 1500,
+        position: 'top',
+      })
+
+      await toast.present()
     })
-    .catch((error) => console.error('Error saving todo', error))
+    .catch(async (error) => {
+      const alert = await alertController.create({
+        header: 'Error',
+        subHeader: 'Could not create Todo',
+        message: 'Check console log for details.',
+        buttons: ['OK'],
+      })
+
+      await alert.present()
+
+      console.error('Error saving todo', error)
+    })
 }
 
 const getTodos = () => {
@@ -113,13 +134,31 @@ const handleSearch = (event) => {
 
 const deleteTodo = (aToDeleteTodo) => {
   DataStore.delete(aToDeleteTodo)
-    .then(
-      () =>
-        (todos.value = todos.value.filter(
-          (aListedTodo) => aListedTodo != aToDeleteTodo
-        ))
-    )
-    .catch((error) => console.error(error))
+    .then(async () => {
+      todos.value = todos.value.filter(
+        (aListedTodo) => aListedTodo != aToDeleteTodo
+      )
+
+      const toast = await toastController.create({
+        message: 'Deleted!',
+        duration: 1500,
+        position: 'top',
+      })
+
+      await toast.present()
+    })
+    .catch(async (error) => {
+      const alert = await alertController.create({
+        header: 'Error',
+        subHeader: 'Could not delete Todo',
+        message: 'Check console log for details.',
+        buttons: ['OK'],
+      })
+
+      await alert.present()
+
+      console.error(error)
+    })
 }
 
 getTodos()
