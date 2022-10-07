@@ -22,6 +22,7 @@ import '@ionic/vue/css/text-alignment.css';
 import '@ionic/vue/css/text-transformation.css';
 import '@ionic/vue/css/flex-utils.css';
 import '@ionic/vue/css/display.css';
+import './registerServiceWorker'
 
 
 const app = createApp(App).use(IonicVue).use(router)
