@@ -41,7 +41,9 @@
           </ion-item>
 
           <ion-item-options>
-            <ion-item-option color="danger">Delete</ion-item-option>
+            <ion-item-option @click="deleteTodo(aTodo)" color="danger"
+              >Delete</ion-item-option
+            >
           </ion-item-options>
         </ion-item-sliding>
       </ion-list>
@@ -104,7 +106,20 @@ const getTodos = () => {
 
 const handleSearch = (event) => {
   const query = event.target.value.toLowerCase()
-  todos.value = todos.value.filter((d) => d.name.toLowerCase().indexOf(query) > -1)
+  todos.value = todos.value.filter(
+    (d) => d.name.toLowerCase().indexOf(query) > -1
+  )
+}
+
+const deleteTodo = (aToDeleteTodo) => {
+  DataStore.delete(aToDeleteTodo)
+    .then(
+      () =>
+        (todos.value = todos.value.filter(
+          (aListedTodo) => aListedTodo != aToDeleteTodo
+        ))
+    )
+    .catch((error) => console.error(error))
 }
 
 getTodos()
