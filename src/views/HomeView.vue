@@ -1,20 +1,70 @@
 <template>
-  <div id="app">
-    <h1>Todo App</h1>
-    <input type="text" v-model="name" placeholder="Todo name" />
-    <input type="text" v-model="description" placeholder="Todo description" />
-    <button v-on:click="createTodo">Create Todo</button>
-    <div v-for="item in todos" :key="item.id">
-      <h3>{{ item.name }}</h3>
-      <p>{{ item.description }}</p>
-    </div>
-  </div>
+  <ion-page>
+    <ion-header :translucent="true">
+      <ion-toolbar>
+        <ion-title>Todo App</ion-title>
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-content :fullscreen="true">
+      <ion-fab vertical="top" horizontal="end" edge slot="fixed">
+        <ion-fab-button @click="createTodo">
+          <ion-icon :icon="save"></ion-icon>
+        </ion-fab-button>
+      </ion-fab>
+
+      <ion-list>
+        <ion-item>
+          <ion-label position="stacked">New Todo</ion-label>
+          <ion-input v-model="name" placeholder="To do something"></ion-input>
+          <ion-input
+            v-model="description"
+            placeholder="More details on it ..."
+          ></ion-input>
+        </ion-item>
+      </ion-list>
+
+      <ion-list>
+        <ion-item-sliding v-for="aTodo in todos" :key="aTodo.id">
+          <ion-item>
+            <ion-label>
+              <h2>{{ aTodo.name }}</h2>
+              <p>{{ aTodo.description }}</p>
+            </ion-label>
+          </ion-item>
+
+          <ion-item-options>
+            <ion-item-option color="danger">Delete</ion-item-option>
+          </ion-item-options>
+        </ion-item-sliding>
+      </ion-list>
+    </ion-content>
+  </ion-page>
 </template>
 
 <script setup>
 import { DataStore } from 'aws-amplify'
 import { ref } from 'vue'
 import { Todo } from '../models/index'
+import {
+  IonPage,
+  IonContent,
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonList,
+  IonItemSliding,
+  IonItem,
+  IonItemOptions,
+  IonItemOption,
+  IonLabel,
+  IonInput,
+  IonFab,
+  IonFabButton,
+  IonIcon,
+} from '@ionic/vue'
+
+import { save } from 'ionicons/icons'
 
 const name = ref('')
 const description = ref('')
@@ -30,7 +80,7 @@ const createTodo = () => {
 
   DataStore.save(aNewTodo)
     .then(() => {
-      todos = [...todos, aNewTodo]
+      todos.value = [...todos.value, aNewTodo]
 
       name.value = ''
       description.value = ''
