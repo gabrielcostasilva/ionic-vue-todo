@@ -69,15 +69,7 @@ const todos = ref([])
 
 const saveButtonDisabled = ref(true)
 
-watch(name, (value) => {
-  if (value.length <= 3) {
-    saveButtonDisabled.value = true
-
-  } else {
-    saveButtonDisabled.value = false
-  }
-
-})
+watch(name, (value) => (saveButtonDisabled.value = value.length <= 3))
 
 const createTodoLocal = () => {
   createTodo(name, description, todos)
