@@ -6,7 +6,6 @@ import {
 } from '@ionic/vue'
 
 const createTodo = (name, description, todos) => {
-    if (!name.value || !description.value) return
   
     const aNewTodo = new Todo({
       name: name.value,

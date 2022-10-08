@@ -15,7 +15,7 @@
 
     <ion-content :fullscreen="true">
       <ion-fab vertical="top" horizontal="end" edge slot="fixed">
-        <ion-fab-button @click="createTodoLocal">
+        <ion-fab-button :disabled="saveButtonDisabled" @click="createTodoLocal">
           <ion-icon :icon="save"></ion-icon>
         </ion-fab-button>
       </ion-fab>
@@ -38,7 +38,7 @@
 
 <script setup>
 import { DataStore } from 'aws-amplify'
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { Todo } from '../models/index'
 import {
   IonPage,
@@ -67,6 +67,18 @@ const name = ref('')
 const description = ref('')
 const todos = ref([])
 
+const saveButtonDisabled = ref(true)
+
+watch(name, (value) => {
+  if (value.length <= 3) {
+    saveButtonDisabled.value = true
+
+  } else {
+    saveButtonDisabled.value = false
+  }
+
+})
+
 const createTodoLocal = () => {
   createTodo(name, description, todos)
 }
@@ -89,5 +101,4 @@ const deleteTodoLocal = (aToDeleteTodo) => {
 }
 
 getTodos()
-
 </script>
