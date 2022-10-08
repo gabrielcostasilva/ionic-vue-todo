@@ -15,7 +15,7 @@
 
     <ion-content :fullscreen="true">
       <ion-fab vertical="top" horizontal="end" edge slot="fixed">
-        <ion-fab-button @click="createTodo">
+        <ion-fab-button @click="createTodoLocal">
           <ion-icon :icon="save"></ion-icon>
         </ion-fab-button>
       </ion-fab>
@@ -31,22 +31,7 @@
         </ion-item>
       </ion-list>
 
-      <ion-list>
-        <ion-item-sliding v-for="aTodo in todos" :key="aTodo.id">
-          <ion-item>
-            <ion-label>
-              <h2>{{ aTodo.name }}</h2>
-              <p>{{ aTodo.description }}</p>
-            </ion-label>
-          </ion-item>
-
-          <ion-item-options>
-            <ion-item-option @click="deleteTodo(aTodo)" color="danger"
-              >Delete</ion-item-option
-            >
-          </ion-item-options>
-        </ion-item-sliding>
-      </ion-list>
+      <todo-list :todos="todos" @delete="deleteTodoLocal" />
     </ion-content>
   </ion-page>
 </template>
@@ -62,61 +47,28 @@ import {
   IonToolbar,
   IonTitle,
   IonList,
-  IonItemSliding,
   IonItem,
-  IonItemOptions,
-  IonItemOption,
   IonLabel,
   IonInput,
   IonFab,
   IonFabButton,
   IonIcon,
   IonSearchbar,
-  toastController,
-  alertController,
 } from '@ionic/vue'
 
 import { save } from 'ionicons/icons'
+
+import TodoList from '@/components/TodoList.vue'
+
+import deleteTodo from '@/composables/DeleteTodo'
+import createTodo from '@/composables/CreateTodo'
 
 const name = ref('')
 const description = ref('')
 const todos = ref([])
 
-const createTodo = () => {
-  if (!name.value || !description.value) return
-
-  const aNewTodo = new Todo({
-    name: name.value,
-    description: description.value,
-  })
-
-  DataStore.save(aNewTodo)
-    .then(async () => {
-      todos.value = [...todos.value, aNewTodo]
-
-      name.value = ''
-      description.value = ''
-
-      const toast = await toastController.create({
-        message: 'Created!',
-        duration: 1500,
-        position: 'top',
-      })
-
-      await toast.present()
-    })
-    .catch(async (error) => {
-      const alert = await alertController.create({
-        header: 'Error',
-        subHeader: 'Could not create Todo',
-        message: 'Check console log for details.',
-        buttons: ['OK'],
-      })
-
-      await alert.present()
-
-      console.error('Error saving todo', error)
-    })
+const createTodoLocal = () => {
+  createTodo(name, description, todos)
 }
 
 const getTodos = () => {
@@ -132,34 +84,10 @@ const handleSearch = (event) => {
   )
 }
 
-const deleteTodo = (aToDeleteTodo) => {
-  DataStore.delete(aToDeleteTodo)
-    .then(async () => {
-      todos.value = todos.value.filter(
-        (aListedTodo) => aListedTodo != aToDeleteTodo
-      )
-
-      const toast = await toastController.create({
-        message: 'Deleted!',
-        duration: 1500,
-        position: 'top',
-      })
-
-      await toast.present()
-    })
-    .catch(async (error) => {
-      const alert = await alertController.create({
-        header: 'Error',
-        subHeader: 'Could not delete Todo',
-        message: 'Check console log for details.',
-        buttons: ['OK'],
-      })
-
-      await alert.present()
-
-      console.error(error)
-    })
+const deleteTodoLocal = (aToDeleteTodo) => {
+  deleteTodo(aToDeleteTodo, todos)
 }
 
 getTodos()
+
 </script>
