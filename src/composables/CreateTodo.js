@@ -14,7 +14,6 @@ const createTodo = (name, description, todos) => {
   
     DataStore.save(aNewTodo)
       .then(async () => {
-        todos.value = [...todos.value, aNewTodo]
   
         name.value = ''
         description.value = ''

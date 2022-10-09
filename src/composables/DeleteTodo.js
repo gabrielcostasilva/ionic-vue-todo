@@ -8,9 +8,6 @@ import {
 const deleteTodo = (aToDeleteTodo, todos) => {
   DataStore.delete(aToDeleteTodo)
     .then(async () => {
-      todos.value = todos.value.filter(
-        (aListedTodo) => aListedTodo != aToDeleteTodo
-      )
 
       const toast = await toastController.create({
         message: 'Deleted!',

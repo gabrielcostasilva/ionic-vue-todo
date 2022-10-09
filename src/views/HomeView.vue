@@ -92,5 +92,10 @@ const deleteTodoLocal = (aToDeleteTodo) => {
   deleteTodo(aToDeleteTodo, todos)
 }
 
+const subscription = DataStore.observe(Todo).subscribe((msg) => {
+  getTodos()
+})
+
 getTodos()
+
 </script>
